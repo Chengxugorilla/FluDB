@@ -4,10 +4,12 @@
 \alias{read_sequences}
 \title{title}
 \usage{
-read_sequences(file)
+read_sequences(file, seq_type)
 }
 \arguments{
 \item{file}{description}
+
+\item{seq_type}{description}
 }
 \description{
 A short description...

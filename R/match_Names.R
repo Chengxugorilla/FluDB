@@ -16,9 +16,9 @@ match_Names <- function(tb,GISAID_ref,type="H3N2"){
 
   ## fully match
   idx_Reals <- unique(c(grep(Names,GISAID_ref[,1],fixed = TRUE),
-                        grep(Names,GISAID_ref[,5],fixed = TRUE)))
-  idx_Nicks <- unique(c(grep(Names,GISAID_ref[,1],fixed = TRUE),
-                        grep(Names,GISAID_ref[,5],fixed = TRUE)))
+                        grep(Names,GISAID_ref$FluDB_ID,fixed = TRUE)))
+  idx_Nicks <- unique(c(grep(Nicknames,GISAID_ref[,1],fixed = TRUE),
+                        grep(Nicknames,GISAID_ref$FluDB_ID,fixed = TRUE)))
   idx_Virus <- union(idx_Reals,idx_Nicks)
 
   ## nickname match
@@ -37,7 +37,7 @@ match_Names <- function(tb,GISAID_ref,type="H3N2"){
     Virus_std[length(Virus_std)] <- Virus_std_year
     Virus_std_Names <- paste(Virus_std,collapse="/")
     idx_Virus <- unique(c(grep(Virus_std_Names,GISAID_ref[,1],fixed = TRUE),
-                          grep(Virus_std_Names,GISAID_ref[,5],fixed = TRUE)))
+                          grep(Virus_std_Names,GISAID_ref$FluDB_ID,fixed = TRUE)))
   }
 
   return(idx_Virus)

@@ -1,6 +1,8 @@
 add_Nicknames <- function(TB_list,type){
   result <-
-    lapply(TB_list, function(x){
+    lapply(seq_along(TB_list), function(i){
+      print(i)
+      x <- TB_list[[i]]
       x$Nicknames <-
         unlist(
           WHO_standardization(x$Virus,type))

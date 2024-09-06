@@ -85,28 +85,6 @@ build_Serum_new <- function(TB_list,GISAID_ref,type){
 }
 
 
-
-col_search <- function(Virus,GISAID_ref,type){
-  strings <- strsplit(Virus," ")[[1]]
-
-  if(length(strings) != 2)
-    return(0)
-
-  idx_Names <- match_Names(strings[1], GISAID_ref,type)
-  if(length(idx_Names) == 0)
-    return(0)
-
-  idx_Passage <- idx_Names[match_passage(strings[2],GISAID_ref[idx_Names,])]
-
-  if(length(idx_Passage)==0){
-    idx <- idx_Names
-  }else{
-    idx <- idx_Passage
-  }
-  return(idx[1])
-}
-
-
 #' @title Obtain index of GISAID
 #' @description A short description...
 #' @param Dates description

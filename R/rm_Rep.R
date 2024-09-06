@@ -1,4 +1,4 @@
-rm_Replicated <- function(TB){
+rm_Rep <- function(TB){
   Vir <- names(table(TB$GISAID_ID)[table(TB$GISAID_ID) > 1])
   if(length(Vir) == 0)
     return(TB)
@@ -6,7 +6,7 @@ rm_Replicated <- function(TB){
   replica <-
     lapply(seq_along(Vir), function(i){
       x <- Vir[i]
-      rows <- unlist(apply(TB[TB$GISAID_ID == x,-c(1:5)],2,get_mode))
+      rows <- unlist(apply(TB[TB$GISAID_ID == x,-1],2,get_mode))
       if(!is.null(rows)){
         df <- as.data.frame(t(rows))
         df <- cbind(x,df)
@@ -25,7 +25,3 @@ rm_Replicated <- function(TB){
   return(result[!is.na(result$GISAID_ID),])
 }
 
-get_mode <- function(x) {
-  freq_table <- sort(table(x))
-  return(names(freq_table)[1])
-}

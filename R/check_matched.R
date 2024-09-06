@@ -1,3 +1,8 @@
+#' @title Check row matched
+#' @description check which row in a table with Genetic group do not
+#' match to a GISAID sequence.
+#' 
+
 check_matched <- function(TB_list){
   mm <-
   lapply(seq_along(TB_list), function(i){

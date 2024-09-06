@@ -4,10 +4,12 @@
 \alias{build_GISAID}
 \title{Build GISAID reference information}
 \usage{
-build_GISAID(file, type)
+build_GISAID(file, type, seq_type)
 }
 \arguments{
 \item{file}{the address of the fasta file.}
+
+\item{seq_type}{DNA or AA.}
 }
 \description{
 return a list contain meta information of virus from a fasta file.

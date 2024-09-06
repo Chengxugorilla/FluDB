@@ -24,6 +24,6 @@ check_TB_Colnames <- function(TB_list){
 
 check_columns <- function(cnames) {
   cnames <- cnames[-c(1:4,length(cnames))]
-  result <- stringr::str_detect(cnames, "^\\d+$")
+  result <- stringr::str_detect(cnames, "^\\d+$|^EPI")
   return(result)
 }

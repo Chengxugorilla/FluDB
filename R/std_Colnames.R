@@ -9,13 +9,12 @@ std_Colnames <- function(TB_list){
       Tb <- TB_list[[i]]
       Ref_num <- length(which(Tb$Type=="Reference"))
       col_Virus <- colnames(Tb)[5:(ncol(Tb)-1)]
-      if(Ref_num==length(col_Virus)){  ## nrow == ncol (in Ref)
-        col_Virus <- 1:Ref_num
-      }else if(all(nchar(col_Virus)!=0)){
-
-      }else if(length(which(nchar(col_Virus)==0))==Ref_num){
-        col_Virus[which(nchar(col_Virus)==0)] <- 1:Ref_num
+      col_absent_idx <- which(nchar(col_Virus)==0)
+      
+      if(length(col_absent_idx) == Ref_num){
+        col_Virus[col_absent_idx] <- 1:Ref_num
       }
+      
       colnames(Tb)[5:(ncol(Tb)-1)] <- col_Virus
       Tb
     })

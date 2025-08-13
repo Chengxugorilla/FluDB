@@ -7,11 +7,11 @@
 match_Names(tb, GISAID_ref, type = "H3N2")
 }
 \arguments{
+\item{tb}{description}
+
 \item{GISAID_ref}{description}
 
 \item{type}{description}
-
-\item{Names}{description}
 }
 \description{
 A short description...

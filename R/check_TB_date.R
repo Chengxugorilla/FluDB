@@ -4,6 +4,7 @@
 #' @export
 
 check_TB_Date <- function(TB_list){
+  #browser()
   error_list <- list()
   TB_Names <- names(TB_list)
   for(i in seq_along(TB_list)){
@@ -22,20 +23,26 @@ check_TB_Date <- function(TB_list){
 #' @export
 
 check_dates <- function(dates) {
-  dates <- as.Date(dates)
-  dates[is.na(dates)] <- lubridate::ymd_hms("1900-01-01 00:00:00", tz = "UTC")
-  # seach pattern
-  date_pattern <- "^\\d{4}-\\d{2}-\\d{2}$|^\\d{4}-\\d{2}$|^\\d{4}-\\d{1}$|^\\d{4}-\\d{1}-\\d{2}$|^\\d{4}-\\d{2}-\\d{1}$|^\\d{4}-\\d{1}-\\d{1}$"
+  #tryCatch({
+    #browser()
+    #dates <- as.Date(dates)
+    #dates[is.na(dates)] <- lubridate::ymd_hms("1900-01-01 00:00:00", tz = "UTC")
+    # seach pattern
+    date_pattern <- "^\\d{4}-\\d{2}-\\d{2}$|^\\d{4}-\\d{2}$|^\\d{4}-\\d{1}$|^\\d{4}-\\d{1}-\\d{2}$|^\\d{4}-\\d{2}-\\d{1}$|^\\d{4}-\\d{1}-\\d{1}$"
 
-  # seach
-  result <-
-  unlist(lapply(seq_along(dates), function(i){
-    date <- dates[i]
-    if(grepl(date_pattern, date)){
-      TRUE
-    } else {
-      FALSE
-    }
-  }))
-  return(result)
+    # seach
+    result <-
+      unlist(lapply(seq_along(dates), function(i){
+        date <- dates[i]
+        if(grepl(date_pattern, date)){
+          TRUE
+        } else {
+          FALSE
+        }
+      }))
+    return(result)
+  #   },
+  #   error = function(e){
+  #     return(rep(FALSE,length(dates)))
+  # })
 }

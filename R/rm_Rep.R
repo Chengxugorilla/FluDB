@@ -1,16 +1,23 @@
-rm_Rep <- function(TB){
-  Vir <- names(table(TB$GISAID_ID)[table(TB$GISAID_ID) > 1])
+#' @title rm
+#' @description
+#' remove replicated row virus names
+#' @param TB description
+#' @param match.col description
+#' @importFrom dplyr bind_rows
+
+rm_Rep <- function(TB,match.col){
+  Vir <- names(table(TB[,match.col])[table(TB[,match.col]) > 1])
   if(length(Vir) == 0)
     return(TB)
 
   replica <-
     lapply(seq_along(Vir), function(i){
       x <- Vir[i]
-      rows <- unlist(apply(TB[TB$GISAID_ID == x,-1],2,get_mode))
+      rows <- unlist(apply(TB[TB[,match.col] == x,-1],2,get_mode))
       if(!is.null(rows)){
         df <- as.data.frame(t(rows))
         df <- cbind(x,df)
-        colnames(df)[1] <- "GISAID_ID"
+        colnames(df)[1] <- match.col
         return(df)
       }
       else
@@ -18,10 +25,9 @@ rm_Rep <- function(TB){
     })
   names(replica) <- Vir
   replica_list <- Filter(Negate(is.null), replica)
-  library(plyr)
-  sup <- do.call("rbind.fill",replica_list)
+  sup <- do.call("bind_rows",replica_list)
   rownames(sup) <- names(replica_list)
-  result <- rbind.fill(TB[!TB$GISAID_ID %in% Vir,],sup)
-  return(result[!is.na(result$GISAID_ID),])
+  result <- bind_rows(TB[!TB[,match.col] %in% Vir,],sup)
+  return(result[!is.na(result[,match.col]),])
 }
 

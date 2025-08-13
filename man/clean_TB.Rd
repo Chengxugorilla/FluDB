@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_TB.R
 \name{clean_TB}
 \alias{clean_TB}
-\title{title}
+\title{remove Test row, add Type column}
 \usage{
 clean_TB(TB)
 }

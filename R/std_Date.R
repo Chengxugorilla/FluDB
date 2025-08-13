@@ -6,6 +6,8 @@
 std_Date <- function(TB_list){
   result <-
   lapply(seq_along(TB_list),function(i){
+    print(i)
+    #browser()
     tb <- TB_list[[i]]
     tb$`Collection date` <- as.Date(std_Date_tb(tb))
     return(tb)

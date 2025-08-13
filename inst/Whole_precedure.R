@@ -1,0 +1,171 @@
+# 1. fill absent in Isolate_ID
+library(FluDB)
+flu_type = 'H3N2'
+WHO_path = "/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H3N2/CDC-H3N2.xlsx"
+GISAID_path = paste0("/Users/oliver/Downloads/同步空间/U-Vaccine/数据/Sequence/Protein/",flu_type,"/All.fasta")
+GISAID_data <- build_GISAID(GISAID_path,type=flu_type,seq_type = "AA",nROW = 16)
+
+## 读取有EPI ID号的表格
+WHO_TB <- read_WHO_xlsx(WHO_path)
+
+## 找出每个表中没有EPI ID的行,去除重复
+absent_Isolate <- extract_Isolate_ID_absent(WHO_TB,absent.row = "Isolate_ID",info_col=1:6,only_Ref = FALSE)
+absent_Isolate$`Collection date` <- as.character(absent_Isolate$`Collection date`)
+
+exaxt_matching <- exact_matching_strain(WHO_TB, GISAID_data[[1]], '/Users/oliver/Desktop/absent.csv')
+exact_matched_strain <- exaxt_matching[exaxt_matching$Isolate_ID != '',]
+exact_unmatched_strain <- exaxt_matching[exaxt_matching$Isolate_ID == '',]
+
+GISAID_meta <- GISAID_data[[1]]
+GISAID_meta$`Gene name` <- NULL
+GISAID_meta$`Protein Accession no.` <- NULL
+GISAID_meta <- unique(GISAID_meta)
+artificial_maching <- matchGISAIDApp(exact_unmatched_strain, GISAID_meta)
+
+absent_Isolate_fill <- rbind(exact_matched_strain,artificial_maching)
+absent_Isolate_fill <- absent_Isolate_fill[absent_Isolate_fill$Isolate_ID != "",]
+absent_Isolate_fill$`Collection date` <- as.character(as.Date(absent_Isolate_fill$`Collection date`))
+
+TB_matched <-
+  lapply(seq_along(WHO_TB),function(i){
+    tb <- WHO_TB[[i]]
+    for (j in seq_along(tb[,1])) {
+      Record <- tb[j,]
+      Virus <- Record$Virus
+      Date <- as.Date(Record$`Collection date`)
+      Passage <- Record$`Passage history`
+
+      idx_Virus <- which(absent_Isolate_fill$Virus == Virus)
+      idx_Date <- which(absent_Isolate_fill$`Collection date` == Date)
+      idx_Passage <- which(absent_Isolate_fill$`Passage history` == Passage)
+      idx_match <- intersect(intersect(idx_Virus,idx_Date),idx_Passage)
+      if(length(idx_match) != 0){
+        tb[j,1:2] <- c(absent_Isolate_fill$Isolate_ID[idx_match[1]],absent_Isolate_fill$ID_Passs[idx_match[1]])
+      }
+    }
+    return(tb)
+  })
+names(TB_matched) <- names(WHO_TB)
+save_path = "/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H1N1/H1N1(Annotation).xlsx"
+write_TB_list(TB_matched,file_path = save_path)
+library(openxlsx)
+
+## 2. Read WHO HI table -> remove Test rows -> extract A/..../YYYY part
+HI_titer_Path <- '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H1N1/H1N1(Annotation).xlsx'
+TB_1 <- read_WHO_xlsx(HI_titer_Path)
+match_start <- 7
+
+filt_1 <- Filter(Negate(is.null), TB_1)
+filt_2 <- rm_record_without_EPI_ID(filt_1)
+filt_3 <- titer_standardization(filt_2,match.col = "Isolate_ID",
+                                match_start = match_start, titer_descent = TRUE)
+filt_4 <- TB_list_unfolded(filt_3,GISAID_data,
+                           type=flu_type,match.col = "Isolate_ID",
+                           match_start = match_start)
+filt_5 <- filt_4[!is.na(filt_4$HI_Dist),] ## remove na in HI_Dist
+
+ori_Pass <-
+  c(filt_5$serumPassage,filt_5$virusPassage) %>%
+  gsub("[0-9]","", .) %>%
+  sub("\\\\", "/", .) %>%
+  sub(" ","", .) %>%
+  unique()
+write.csv(data.frame(ori_Pass, PassCat=rep(NA, length(ori_Pass))),
+          file = "/Users/oliver/Desktop/Pass.csv",
+          row.names = FALSE)
+mypass <- read.csv(file = "/Users/oliver/Desktop/Pass.csv")
+mypass$PassCat %<>%
+  sub("1","EGG",.) %>%
+  sub("2","CELL",.) %>%
+  sub("3", "BOTH",.)
+Serum_Pass <- filt_5$serumPassage
+
+filt_5$serumPassCat <- unlist(
+  lapply(seq_along(Serum_Pass),function(i){
+    #browser()
+    Pass_simplified <-
+      Serum_Pass[i] %>%
+      gsub("[0-9]","", .) %>%
+      sub("\\\\", "/", .) %>%
+      sub(" ","", .) %>%
+      unique()
+    if(is.na(Pass_simplified))
+      return(NA)
+    return(mypass[mypass$ori_Pass==Pass_simplified,2])
+  }))
+
+Virus_Pass <- filt_5$virusPassage
+filt_5$virusPassCat <- unlist(
+  lapply(seq_along(Virus_Pass),function(i){
+    Pass_simplified <-
+      Virus_Pass[i] %>%
+      gsub("[0-9]","", .) %>%
+      sub("\\\\", "/", .) %>%
+      sub(" ","", .) %>%
+      unique()
+    if(is.na(Pass_simplified))
+      return(NA)
+    return(mypass[mypass$ori_Pass==Pass_simplified,2])
+  }))
+filt_5$serumType <- rep(flu_type,nrow(filt_5))
+filt_5$virusType <- rep(flu_type,nrow(filt_5))
+final_col_idx <- c("serumName","serumPassage","serumPassCat","serumDate",
+                   "serumType","ferret","virusName", "virusPassage",
+                   "virusPassCat", "virusDate","virusType",
+                   "sheet", "serumIslID","serumMatchedPass",
+                   "virusIslID", "virusMatchedPass", "HI_Dist")
+
+final_tb <- filt_5[,final_col_idx]
+View(final_tb)
+
+sheet_meta <- read.csv(file = "/Users/oliver/Desktop/sheet_meta.csv")
+dataSource <- c()
+for (i in seq_along(final_tb[,1])) {
+  fluType <- final_tb$serumType[i]
+  sheet_names <- final_tb$sheet[i]
+  match_idx <- which(sheet_meta$fluType==fluType & sheet_meta$sheet==sheet_names)
+  temp <- sheet_meta[match_idx,c("dataSource","season","Page","Table")]
+  institute <- temp[,1]
+  season <- temp[,2]
+  Page <- paste0("Page",temp[,3])
+  table_ID <- paste0("Table",temp[,4])
+  result <-
+    paste(institute,season,Page,table_ID,sep = " ")
+  dataSource <- c(dataSource, result)
+}
+
+final_table <-final_tb
+final_table$dataSource <- dataSource
+final_col_idx <- c("serumName","serumPassage","serumPassCat","serumDate",
+                   "serumType","ferret","virusName", "virusPassage",
+                   "virusPassCat", "virusDate","virusType",
+                   "dataSource", "serumIslID","serumMatchedPass",
+                   "virusIslID", "virusMatchedPass", "HI_Dist")
+
+final_table <- final_table[,final_col_idx]
+final_table$serumName <- toupper(final_table$serumName)
+final_table$virusName <- toupper(final_table$virusName)
+
+## Add sequences
+GISAID_dataframe <- GISAID_data[[1]]
+GISAID_dataframe$sequence <- GISAID_data[[2]]
+GISAID_HA <- GISAID_dataframe[GISAID_dataframe$`Gene name`== 'HA',]
+GISAID_NA <- GISAID_dataframe[GISAID_dataframe$`Gene name`== 'NA',]
+HA_seqs <- setNames(GISAID_HA$sequence, GISAID_HA$`Isolate ID`)
+NA_seqs <- setNames(GISAID_NA$sequence, GISAID_NA$`Isolate ID`)
+final_table$serumHA <- HA_seqs[final_table$serumIslID]
+final_table$serumNA <- NA_seqs[final_table$serumIslID]
+final_table$virusHA <- HA_seqs[final_table$virusIslID]
+final_table$virusNA <- NA_seqs[final_table$virusIslID]
+
+idx_filted <- which(is.na(final_table$serumHA)|is.na(final_table$serumNA)|is.na(final_table$virusHA)|is.na(final_table$virusNA))
+if(length(idx_filted) != 0)
+  final_table <- final_table[-idx_filted,]
+library(dplyr)
+Result_table <- distinct(final_table)
+library(openxlsx)
+wb <- openxlsx::createWorkbook()
+sheet_name <- "Meta Information"
+openxlsx::addWorksheet(wb, sheet_name)
+openxlsx::writeData(wb, sheet_name, Result_table)
+openxlsx::saveWorkbook(wb, "/Users/oliver/Desktop/data4model(CDC-H1N1).xlsx", overwrite = TRUE)

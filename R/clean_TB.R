@@ -1,4 +1,4 @@
-#' @title title
+#' @title remove Test row, add Type column
 #' @description d
 #' @param TB d
 

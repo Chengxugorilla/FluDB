@@ -6,6 +6,9 @@
 \usage{
 check_matched(TB_list)
 }
+\arguments{
+\item{TB_list}{description}
+}
 \description{
 check which row in a table with Genetic group do not
 match to a GISAID sequence.

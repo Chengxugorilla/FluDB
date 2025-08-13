@@ -1,14 +1,30 @@
-Package: FluDB
 Type: Package
+Package: FluDB
 Title: What the Package Does (Title Case)
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: More about what it does (maybe more than one line) Use four
+    spaces when indenting paragraphs within the Description.
+License: GPL-3
+Imports: 
+    Biostrings (>= 2.70.1),
+    dplyr,
+    DT,
+    future,
+    future.apply,
+    magrittr,
+    openxlsx,
+    pinyin,
+    progressr,
+    readxl,
+    shiny,
+    stringr,
+    tools,
+    rlang
+Suggests: 
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Suggests:
-  Biostrings (>= 2.70.1)

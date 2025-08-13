@@ -1,7 +1,7 @@
 #' @title Check row matched
 #' @description check which row in a table with Genetic group do not
 #' match to a GISAID sequence.
-#' 
+#' @param TB_list description
 
 check_matched <- function(TB_list){
   mm <-

@@ -16,12 +16,6 @@ check_TB_Colnames <- function(TB_list){
   error_list
 }
 
-
-#' @title title
-#' @description d
-#' @param dates description
-#' @export
-
 check_columns <- function(cnames) {
   cnames <- cnames[-c(1:4,length(cnames))]
   result <- stringr::str_detect(cnames, "^\\d+$|^EPI")

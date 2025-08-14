@@ -51,7 +51,7 @@ write_TB_list(TB_matched,file_path = save_path)
 library(openxlsx)
 
 ## 2. Read WHO HI table -> remove Test rows -> extract A/..../YYYY part
-HI_titer_Path <- '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H1N1/H1N1(Annotation).xlsx'
+HI_titer_Path <- '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/Francis Crick HI/H1N1(Annotation)/H1N1(43-Annotation).xlsx'
 TB_1 <- read_WHO_xlsx(HI_titer_Path)
 match_start <- 7
 

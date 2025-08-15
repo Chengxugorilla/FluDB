@@ -1,3 +1,12 @@
+#' @title extract
+#' @description
+#' A short description...
+#' @param TB_list description
+#' @param absent.row dd
+#' @param info_col description
+#' @param only_Ref dd
+#' @export
+
 extract_Isolate_ID_absent <- function(TB_list,absent.row,info_col,only_Ref){
   result_TB_list <-
   lapply(seq_along(TB_list), function(i){

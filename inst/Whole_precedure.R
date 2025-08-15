@@ -1,7 +1,7 @@
 # 1. fill absent in Isolate_ID
 library(FluDB)
 flu_type = 'H3N2'
-WHO_path = "/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H3N2/CDC-H3N2.xlsx"
+WHO_path = '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/Francis Crick HI/H3N2(Annotation)/H3N2(43).xlsx'
 GISAID_path = paste0("/Users/oliver/Downloads/同步空间/U-Vaccine/数据/Sequence/Protein/",flu_type,"/All.fasta")
 GISAID_data <- build_GISAID(GISAID_path,type=flu_type,seq_type = "AA",nROW = 16)
 
@@ -46,12 +46,12 @@ TB_matched <-
     return(tb)
   })
 names(TB_matched) <- names(WHO_TB)
-save_path = "/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/CDC/H1N1/H1N1(Annotation).xlsx"
+save_path = "/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/Francis Crick HI/H3N2(Annotation)/H3N2(43-Annotation).xlsx"
 write_TB_list(TB_matched,file_path = save_path)
 library(openxlsx)
 
 ## 2. Read WHO HI table -> remove Test rows -> extract A/..../YYYY part
-HI_titer_Path <- '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/Francis Crick HI/H1N1(Annotation)/H1N1(43-Annotation).xlsx'
+HI_titer_Path <- '/Users/oliver/Downloads/同步空间/U-Vaccine/数据/HI/Francis Crick HI/H3N2(Annotation)/H3N2(43-Annotation).xlsx'
 TB_1 <- read_WHO_xlsx(HI_titer_Path)
 match_start <- 7
 
@@ -163,9 +163,6 @@ if(length(idx_filted) != 0)
   final_table <- final_table[-idx_filted,]
 library(dplyr)
 Result_table <- distinct(final_table)
-library(openxlsx)
-wb <- openxlsx::createWorkbook()
-sheet_name <- "Meta Information"
-openxlsx::addWorksheet(wb, sheet_name)
-openxlsx::writeData(wb, sheet_name, Result_table)
-openxlsx::saveWorkbook(wb, "/Users/oliver/Desktop/data4model(CDC-H1N1).xlsx", overwrite = TRUE)
+write.csv(Result_table,
+          file = "/Users/oliver/Desktop/data4model(Crick43-H3N2).csv",
+          row.names = FALSE)

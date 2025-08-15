@@ -8,6 +8,7 @@
 #' @importFrom DT datatable DTOutput renderDT
 #' @importFrom dplyr filter %>%
 #' @importFrom rlang .data
+#' @export
 
 matchGISAIDApp <- function(strain_df, GISAID_df) {
   stopifnot(

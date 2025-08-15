@@ -1,3 +1,9 @@
+#' @title DD
+#' @description
+#' A short description...
+#'
+#' @export
+
 titer_standardization <- function(TB_list,match.col,match_start,titer_descent=FALSE){
   result <-
   lapply(seq_along(TB_list),function(i){

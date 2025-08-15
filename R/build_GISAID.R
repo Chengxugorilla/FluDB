@@ -4,6 +4,7 @@
 #' @param type flu type
 #' @param seq_type DNA or AA.
 #' @param nROW rows in df
+#' @export
 
 build_GISAID <- function(file,type,seq_type,nROW){
   ## read sequence from file

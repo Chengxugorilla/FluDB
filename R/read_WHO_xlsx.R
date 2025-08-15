@@ -1,6 +1,7 @@
 #' @title title
 #' @description dd
 #' @param file description
+#' @export
 
 read_WHO_xlsx <- function(file){
   sheet_names <- readxl::excel_sheets(file)

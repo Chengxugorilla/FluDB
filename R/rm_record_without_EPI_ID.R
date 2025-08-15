@@ -1,9 +1,12 @@
-
+#' @title Build GISAID reference information
+#' @description return a list contain meta information of virus from a fasta file.
+#' @param TB_list description
+#' @export
 
 rm_record_without_EPI_ID <- function(TB_list){
   result_list <-
-    lapply(seq_along(filt_1), function(i){
-      Tb <- filt_1[[i]]
+    lapply(seq_along(TB_list), function(i){
+      Tb <- TB_list[[i]]
       idx_absent_row <- which(is.na(Tb$Isolate_ID))
       if(length(idx_absent_row) > 0){
         Tb <- Tb[,!colnames(Tb) %in% idx_absent_row]

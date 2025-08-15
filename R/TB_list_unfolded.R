@@ -1,5 +1,10 @@
 utils::globalVariables(".")
+#' @title dd
+#' @description
+#' A short description...
+#'
 #' @importFrom magrittr %>%
+#' @export
 
 TB_list_unfolded <- function(TB_list,GISAID_ref,type,parallel=TRUE,match.col,match_start){
   integrate_tb_list <-

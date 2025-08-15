@@ -4,6 +4,7 @@
 #' @param absent_Isolates description
 #' @param GISAID_REF description
 #' @param save_path description
+#' @export
 
 exact_matching_strain <- function(absent_Isolates, GISAID_REF, save_path){
   ## 在GISAID参考信息中,寻找Virus name, Collection date, Passage history完全一样的序列
